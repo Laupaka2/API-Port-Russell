@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Documentation de l'API – Port de Russell</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/css/custom-navbar.css" rel="stylesheet" />
+
+  <!-- Swagger UI CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@4/swagger-ui.css" />
+</head>
+<body class="bg-light">
+  <nav class="navbar navbar-expand-lg navbar-custom mb-4">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="dashboard.html">Port de Russell</a>
+      <div>
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="dashboard.html">Tableau de bord</a></li>
+          <li class="nav-item"><a class="nav-link" href="catways.html">Catways</a></li>
+          <li class="nav-item"><a class="nav-link" href="reservations.html">Réservations</a></li>
+          <li class="nav-item"><a class="nav-link" href="users.html">Utilisateurs</a></li>
+          <li class="nav-item"><a class="nav-link active" href="docs.html">Documentation API</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mt-5">
+    <h1 class="text-center mb-4">📘 Documentation de l'API</h1>
+    <p class="text-center">Bienvenue dans la documentation technique de l'API du port de plaisance de Russell.</p>
+
+    <hr>
+
+    <!-- Documentation textuelle optionnelle -->
+    <h3>🔐 Authentification</h3>
+    <ul>
+      <li><code>POST /login</code> : Se connecter (retourne un JWT)</li>
+      <li><code>GET /logout</code> : Se déconnecter</li>
+    </ul>
+
+    <h3>👤 Utilisateurs</h3>
+    <ul>
+      <li><code>GET /users/</code> : Lister tous les utilisateurs</li>
+      <li><code>GET /users/:email</code> : Détails d’un utilisateur</li>
+      <li><code>POST /users/</code> : Créer un utilisateur</li>
+      <li><code>PUT /users/:email</code> : Modifier un utilisateur</li>
+      <li><code>DELETE /users/:email</code> : Supprimer un utilisateur</li>
+    </ul>
+
+    <h3>🛶 Catways</h3>
+    <ul>
+      <li><code>GET /catways</code> : Liste des catways</li>
+      <li><code>GET /catways/:id</code> : Détail d’un catway</li>
+      <li><code>POST /catways</code> : Ajouter un catway</li>
+      <li><code>PUT /catways/:id</code> : Modifier l’état d’un catway</li>
+      <li><code>DELETE /catways/:id</code> : Supprimer un catway</li>
+    </ul>
+
+    <h3>📅 Réservations</h3>
+    <ul>
+      <li><code>GET /catways/:id/reservations</code> : Liste des réservations pour un catway</li>
+      <li><code>GET /catways/:id/reservations/:idReservation</code> : Détail d’une réservation</li>
+      <li><code>POST /catways/:id/reservations</code> : Ajouter une réservation</li>
+      <li><code>PUT /catways/:id/reservations/:idReservation</code> : Modifier une réservation</li>
+      <li><code>DELETE /catways/:id/reservations/:idReservation</code> : Supprimer une réservation</li>
+    </ul>
+
+    <hr>
+
+    <!-- Conteneur Swagger UI -->
+    <div id="swagger-ui" class="mb-5"></div>
+
+    <p class="text-center mt-4">
+      <a href="dashboard.html" class="btn btn-primary">⬅ Retour à l'accueil</a>
+    </p>
+  </div>
+
+  <!-- Swagger UI JS -->
+  <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@4/swagger-ui-bundle.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@4/swagger-ui-standalone-preset.js"></script>
+
+  <script>
+    // Initialisation Swagger UI
+    window.onload = function() {
+      SwaggerUIBundle({
+        url: "/swagger.json", // fichier swagger.json placé dans /public
+        dom_id: '#swagger-ui',
+        deepLinking: true,
+        presets: [
+          SwaggerUIBundle.presets.apis,
+          SwaggerUIStandalonePreset
+        ],
+        layout: "StandaloneLayout",
+        validatorUrl: null
+      });
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tableau de bord - Port de Russell</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="/css/custom-navbar.css" rel="stylesheet" />
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-custom mb-4">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="dashboard.html">Port de Russell</a>
+      <div class="navbar-nav mx-auto">
+        <a class="nav-link active" href="dashboard.html">Tableau de bord</a>
+        <a class="nav-link" href="catways.html">Catways</a>
+        <a class="nav-link" href="reservations.html">Réservations</a>
+        <a class="nav-link" href="users.html">Utilisateurs</a>
+        <a class="nav-link" href="docs.html">Documentation API</a>
+      </div>
+      <button id="logoutBtn" class="btn-logout">Se déconnecter</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h1>Tableau de bord</h1>
+
+    <div class="mb-3">
+      <p><strong>Utilisateur :</strong> <span id="userInfo"></span></p>
+      <p><strong>Aujourd'hui :</strong> <span id="todayDate"></span></p>
+    </div>
+
+    <h2>Catways</h2>
+    <table class="table table-bordered" id="catwayTable">
+      <thead>
+        <tr>
+          <th>Numéro</th>
+          <th>Type</th>
+          <th>État</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <h2>Réservations en cours</h2>
+    <table class="table table-bordered" id="reservationCurrent">
+      <thead>
+        <tr>
+          <th>Catway</th>
+          <th>Client</th>
+          <th>Bateau</th>
+          <th>Début</th>
+          <th>Fin</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <h2>Réservations futures</h2>
+    <table class="table table-bordered" id="reservationFuture">
+      <thead>
+        <tr>
+          <th>Catway</th>
+          <th>Client</th>
+          <th>Bateau</th>
+          <th>Début</th>
+          <th>Fin</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <h2>Réservations passées</h2>
+    <table class="table table-bordered" id="reservationPast">
+      <thead>
+        <tr>
+          <th>Catway</th>
+          <th>Client</th>
+          <th>Bateau</th>
+          <th>Début</th>
+          <th>Fin</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+  </div>
+
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>
