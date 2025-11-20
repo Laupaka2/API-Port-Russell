@@ -9,7 +9,6 @@ if (!token) window.location.href = '/index.html';
 
 const catwaySelect = document.getElementById('catwayNumber');
 let editingReservation = null;
-let cachedCatways = [];
 
 /**
  * Récupère toutes les réservations pour tous les catways et les affiche dans le tableau.
@@ -21,8 +20,6 @@ async function fetchAllReservations() {
     const resCatways = await fetch('/catways', { headers: { Authorization: `Bearer ${token}` } });
     if (!resCatways.ok) throw new Error('Erreur lors du chargement des catways');
     const catways = await resCatways.json();
-    cachedCatways = catways;
-    populateCatwaySelect(catways);
 
     const allReservations = [];
     // Récupère les réservations pour chaque catway
@@ -136,11 +133,7 @@ function resetForm() {
   const form = document.getElementById('reservationForm');
   form.reset();
   catwaySelect.disabled = false;
-  if (cachedCatways.length) {
-    populateCatwaySelect(cachedCatways);
-  } else {
-    catwaySelect.selectedIndex = 0;
-  }
+  catwaySelect.selectedIndex = 0;
   document.getElementById('submitBtn').textContent = 'Enregistrer';
   document.getElementById('cancelBtn').style.display = 'none';
 }
@@ -195,41 +188,6 @@ function onDeleteClick(event) {
       }
     })
     .catch(() => alert('Erreur réseau'));
-}
-
-/**
- * Remplit la liste déroulante des catways avec les numéros disponibles.
- * @param {Array} catways 
- */
-function populateCatwaySelect(catways = []) {
-  const previouslySelected = catwaySelect.value;
-  const wasDisabled = catwaySelect.disabled;
-
-  catwaySelect.innerHTML = '';
-  const placeholder = document.createElement('option');
-  placeholder.value = '';
-  placeholder.disabled = true;
-  placeholder.selected = true;
-  placeholder.textContent = 'Sélectionnez un catway';
-  catwaySelect.appendChild(placeholder);
-
-  catways
-    .map(c => c.catwayNumber)
-    .filter(num => num !== undefined && num !== null)
-    .sort((a, b) => Number(a) - Number(b))
-    .forEach(num => {
-      const option = document.createElement('option');
-      option.value = num;
-      option.textContent = `Catway n°${num}`;
-      catwaySelect.appendChild(option);
-    });
-
-  if (previouslySelected && catways.some(c => String(c.catwayNumber) === String(previouslySelected))) {
-    catwaySelect.value = previouslySelected;
-    placeholder.selected = false;
-  }
-
-  catwaySelect.disabled = wasDisabled;
 }
 
 // Chargement initial
