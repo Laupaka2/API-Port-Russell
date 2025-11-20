@@ -27,10 +27,12 @@
 
   <div class="container mt-4">
     <h1>Gestion des Réservations</h1>
-    <form id="reservationForm">
+      <form id="reservationForm">
       <div class="mb-3">
         <label for="catwayNumber" class="form-label">Numéro du catway</label>
-        <input type="number" class="form-control" id="catwayNumber" required />
+          <select class="form-select" id="catwayNumber" required>
+            <option value="" disabled selected>Sélectionnez un catway</option>
+          </select>
       </div>
       <div class="mb-3">
         <label for="clientName" class="form-label">Nom du client</label>
