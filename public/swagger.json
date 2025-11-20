@@ -7,12 +7,12 @@
   },
   "servers": [
     {
-      "url": "http://localhost:3000",
-      "description": "Serveur local"
-    },
-    {
       "url": "https://api-port-russell-c0dn.onrender.com",
       "description": "Serveur déployé (Render)"
+    },
+    {
+      "url": "http://localhost:3000",
+      "description": "Serveur local"
     }
   ],
   "components": {
