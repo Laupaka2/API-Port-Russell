@@ -40,6 +40,7 @@ async function fetchCatways() {
     if (!res.ok) throw new Error('Erreur lors de la récupération des catways');
 
     const catways = await res.json();
+    catways.sort((a, b) => Number(a.catwayNumber) - Number(b.catwayNumber));
     const catwayTable = document.getElementById('catwayTable').querySelector('tbody');
 
     catwayTable.innerHTML = catways.map(catway => `
