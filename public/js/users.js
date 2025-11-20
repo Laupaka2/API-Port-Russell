@@ -13,6 +13,7 @@ const userListEl = document.getElementById('userList');
 const createUserForm = document.getElementById('createUserForm');
 const newUsernameEl = document.getElementById('newUsername');
 const newEmailEl = document.getElementById('newEmail');
+const newPasswordEl = document.getElementById('newPassword');
 
 let editingUserEmail = null; // Email de l'utilisateur en cours de modification
 
@@ -75,33 +76,39 @@ createUserForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const username = newUsernameEl.value.trim();
   const email = newEmailEl.value.trim();
+  const password = newPasswordEl.value.trim();
 
   if (!username || !email) {
     alert('Veuillez remplir tous les champs');
     return;
   }
 
+  if (!editingUserEmail && !password) {
+    alert('Veuillez renseigner un mot de passe pour créer un utilisateur.');
+    return;
+  }
+
   try {
     let res;
     if (editingUserEmail) {
-      // Mise à jour utilisateur
+      const payload = { username };
+      if (password) payload.password = password;
       res = await fetch(`${apiUrl}/${editingUserEmail}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify({ username, email })
+        body: JSON.stringify(payload)
       });
     } else {
-      // Création utilisateur
       res = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify({ username, email })
+        body: JSON.stringify({ username, email, password })
       });
     }
 
@@ -164,6 +171,7 @@ function resetForm() {
   editingUserEmail = null;
   createUserForm.reset();
   newEmailEl.disabled = false;
+  newPasswordEl.value = '';
   createUserForm.querySelector('button[type="submit"]').textContent = 'Créer';
 }
 
