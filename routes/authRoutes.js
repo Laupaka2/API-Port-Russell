@@ -1,3 +1,8 @@
+/**
+ * @file routes/authRoutes.js
+ * @description Routes d'authentification (login/logout) et utilitaires associés.
+ */
+
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
@@ -8,7 +13,13 @@ dotenv.config();
 
 const router = express.Router();
 
-// Route de connexion
+/**
+ * Authentifie un utilisateur et renvoie un JWT.
+ * @route POST /auth/login
+ * @param {express.Request} req - Doit contenir email et password
+ * @param {express.Response} res - Réponse JSON avec token et user
+ * @returns {Promise<void>}
+ */
 router.post('/login', async (req, res) => {
   let { email, password } = req.body;
 
@@ -52,12 +63,23 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// Route de déconnexion (symbolique côté serveur)
+/**
+ * Point de terminaison de déconnexion (stateless).
+ * @route GET /auth/logout
+ * @param {express.Request} _req
+ * @param {express.Response} res
+ */
 router.get('/logout', (req, res) => {
   res.json({ message: 'Déconnecté' });
 });
 
-// 🔧 Route de debug pour lister les utilisateurs
+/**
+ * Route de debug listant tous les utilisateurs (non protégée, à désactiver en prod).
+ * @route GET /auth/debug
+ * @param {express.Request} _req
+ * @param {express.Response} res
+ * @returns {Promise<void>}
+ */
 router.get('/debug', async (req, res) => {
   try {
     const allUsers = await User.find();

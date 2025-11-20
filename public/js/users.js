@@ -4,7 +4,7 @@
  */
 
 const token = localStorage.getItem('token');
-if (!token) window.location.href = '/index.html';
+if (!token) window.location.href = '/';
 
 const apiUrl = '/users';
 
@@ -19,7 +19,7 @@ let editingUserEmail = null; // Email de l'utilisateur en cours de modification
 // Déconnexion
 document.getElementById('logoutBtn').addEventListener('click', () => {
   localStorage.removeItem('token');
-  window.location.href = '/index.html';
+  window.location.href = '/';
 });
 
 /**

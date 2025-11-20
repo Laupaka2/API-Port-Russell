@@ -7,7 +7,7 @@
 const token = localStorage.getItem('token');
 const user = JSON.parse(localStorage.getItem('user'));
 
-if (!token) window.location.href = '/index.html';
+if (!token) window.location.href = '/';
 
 const userInfoEl = document.getElementById('userInfo');
 const todayDateEl = document.getElementById('todayDate');
@@ -26,7 +26,7 @@ if (user) {
 document.getElementById('logoutBtn').addEventListener('click', () => {
   localStorage.removeItem('token');
   localStorage.removeItem('user');
-  window.location.href = '/index.html';
+  window.location.href = '/';
 });
 
 /**

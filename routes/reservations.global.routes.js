@@ -1,9 +1,20 @@
+/**
+ * @file routes/reservations.global.routes.js
+ * @description Route utilitaire pour consulter l'ensemble des réservations (tous catways).
+ */
+
 const express = require('express');
 const Reservation = require('../models/Reservation');
 
 const router = express.Router();
 
-// GET all reservations
+/**
+ * Retourne toutes les réservations enregistrées.
+ * @route GET /reservations
+ * @param {express.Request} _req
+ * @param {express.Response} res
+ * @returns {Promise<void>}
+ */
 router.get('/', async (req, res) => {
   try {
     const reservations = await Reservation.find();

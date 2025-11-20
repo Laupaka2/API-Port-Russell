@@ -1,10 +1,21 @@
+/**
+ * @file routes/userRoutes.js
+ * @description Routes REST pour la gestion des utilisateurs de la capitainerie.
+ */
+
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 
 const router = express.Router();
 
-// GET all users
+/**
+ * Retourne la liste de tous les utilisateurs (sans mot de passe).
+ * @route GET /users
+ * @param {express.Request} _req
+ * @param {express.Response} res
+ * @returns {Promise<void>}
+ */
 router.get('/', async (req, res) => {
   try {
     const users = await User.find({}, '-password'); // on exclut le mdp
@@ -15,7 +26,13 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET user by email
+/**
+ * Retourne les détails d'un utilisateur identifié par son email.
+ * @route GET /users/:email
+ * @param {express.Request} req
+ * @param {express.Response} res
+ * @returns {Promise<void>}
+ */
 router.get('/:email', async (req, res) => {
   try {
     const user = await User.findOne({ email: req.params.email }, '-password');
@@ -27,7 +44,13 @@ router.get('/:email', async (req, res) => {
   }
 });
 
-// POST create user
+/**
+ * Crée un nouvel utilisateur après validation de l'unicité de l'email.
+ * @route POST /users
+ * @param {express.Request} req
+ * @param {express.Response} res
+ * @returns {Promise<void>}
+ */
 router.post('/', async (req, res) => {
   try {
     const { username, email, password } = req.body;
@@ -52,7 +75,13 @@ router.post('/', async (req, res) => {
   }
 });
 
-// PUT update user by email
+/**
+ * Met à jour le nom ou le mot de passe d'un utilisateur identifié par email.
+ * @route PUT /users/:email
+ * @param {express.Request} req
+ * @param {express.Response} res
+ * @returns {Promise<void>}
+ */
 router.put('/:email', async (req, res) => {
   try {
     const user = await User.findOne({ email: req.params.email });
@@ -74,7 +103,13 @@ router.put('/:email', async (req, res) => {
   }
 });
 
-// DELETE user by email
+/**
+ * Supprime un utilisateur à partir de son email.
+ * @route DELETE /users/:email
+ * @param {express.Request} req
+ * @param {express.Response} res
+ * @returns {Promise<void>}
+ */
 router.delete('/:email', async (req, res) => {
   try {
     const result = await User.deleteOne({ email: req.params.email });

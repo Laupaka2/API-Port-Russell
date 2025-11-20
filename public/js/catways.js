@@ -5,7 +5,7 @@
  */
 
 const token = localStorage.getItem('token');
-if (!token) window.location.href = '/index.html';
+if (!token) window.location.href = '/';
 
 const apiUrl = '/catways';
 const logoutBtn = document.getElementById('logoutBtn');
@@ -20,7 +20,7 @@ let editingCatwayNumber = null;
 // Déconnexion
 logoutBtn.addEventListener('click', () => {
   localStorage.removeItem('token');
-  window.location.href = '/index.html';
+  window.location.href = '/';
 });
 
 /**

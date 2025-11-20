@@ -1,7 +1,19 @@
+/**
+ * @file middlewares/authMiddleware.js
+ * @description Vérifie la présence et la validité d'un JWT dans l'en-tête Authorization.
+ */
+
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 dotenv.config();
 
+/**
+ * Middleware qui protège les routes privées en validant le token JWT.
+ * @param {import('express').Request} req - Requête entrante
+ * @param {import('express').Response} res - Réponse sortante
+ * @param {import('express').NextFunction} next - Callback Express
+ * @returns {void}
+ */
 function authMiddleware(req, res, next) {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {

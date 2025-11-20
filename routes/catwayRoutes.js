@@ -1,9 +1,20 @@
+/**
+ * @file routes/catwayRoutes.js
+ * @description Routes REST pour gérer les catways (CRUD complet).
+ */
+
 const express = require('express');
 const Catway = require('../models/Catway');
 
 const router = express.Router();
 
-// GET all catways
+/**
+ * Liste tous les catways.
+ * @route GET /catways
+ * @param {express.Request} _req
+ * @param {express.Response} res
+ * @returns {Promise<void>}
+ */
 router.get('/', async (req, res) => {
   try {
     const catways = await Catway.find();
@@ -14,7 +25,13 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET catway by id (catwayNumber)
+/**
+ * Récupère un catway à partir de son numéro.
+ * @route GET /catways/:id
+ * @param {express.Request} req
+ * @param {express.Response} res
+ * @returns {Promise<void>}
+ */
 router.get('/:id', async (req, res) => {
   try {
     const catway = await Catway.findOne({ catwayNumber: req.params.id.toString() });
@@ -26,7 +43,13 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// POST create catway
+/**
+ * Crée un nouveau catway après validation des champs requis.
+ * @route POST /catways
+ * @param {express.Request} req
+ * @param {express.Response} res
+ * @returns {Promise<void>}
+ */
 router.post('/', async (req, res) => {
   try {
     const { catwayNumber, catwayType, catwayState } = req.body;
@@ -53,7 +76,13 @@ router.post('/', async (req, res) => {
   }
 });
 
-// PUT update catwayState by id
+/**
+ * Met à jour l'état d'un catway existant.
+ * @route PUT /catways/:id
+ * @param {express.Request} req
+ * @param {express.Response} res
+ * @returns {Promise<void>}
+ */
 router.put('/:id', async (req, res) => {
   try {
     const { catwayState } = req.body;
@@ -74,7 +103,13 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// DELETE catway by id
+/**
+ * Supprime un catway à partir de son numéro.
+ * @route DELETE /catways/:id
+ * @param {express.Request} req
+ * @param {express.Response} res
+ * @returns {Promise<void>}
+ */
 router.delete('/:id', async (req, res) => {
   try {
     const result = await Catway.deleteOne({ catwayNumber: req.params.id.toString() });

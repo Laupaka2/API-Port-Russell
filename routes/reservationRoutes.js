@@ -1,3 +1,8 @@
+/**
+ * @file routes/reservationRoutes.js
+ * @description Routes imbriquées pour gérer les réservations liées à un catway précis.
+ */
+
 const express = require('express');
 const Reservation = require('../models/Reservation');
 const Catway = require('../models/Catway');
@@ -5,7 +10,13 @@ const catwaySeed = require('../data/catways.json');
 
 const router = express.Router({ mergeParams: true });
 
-// GET all reservations for a catway
+/**
+ * Retourne toutes les réservations pour un catway donné.
+ * @route GET /catways/:id/reservations
+ * @param {express.Request} req
+ * @param {express.Response} res
+ * @returns {Promise<void>}
+ */
 router.get('/', async (req, res) => {
   try {
     const catwayNumber = req.params.id;
@@ -20,7 +31,13 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET reservation by idReservation with catway check
+/**
+ * Retourne une réservation spécifique après vérification du catway parent.
+ * @route GET /catways/:id/reservations/:idReservation
+ * @param {express.Request} req
+ * @param {express.Response} res
+ * @returns {Promise<void>}
+ */
 router.get('/:idReservation', async (req, res) => {
   try {
     const reservation = await Reservation.findById(req.params.idReservation);
@@ -39,7 +56,13 @@ router.get('/:idReservation', async (req, res) => {
 
 const MAX_CATWAY_NUMBER = catwaySeed.length;
 
-// POST create reservation for a catway
+/**
+ * Crée une réservation pour un catway (en le créant automatiquement s'il n'existe pas encore).
+ * @route POST /catways/:id/reservations
+ * @param {express.Request} req
+ * @param {express.Response} res
+ * @returns {Promise<void>}
+ */
 router.post('/', async (req, res) => {
   try {
     const rawCatwayNumber = Number(req.params.id);
@@ -95,7 +118,13 @@ router.post('/', async (req, res) => {
   }
 });
 
-// PUT update a reservation by idReservation with catway check
+/**
+ * Met à jour une réservation existante (client, bateau ou dates).
+ * @route PUT /catways/:id/reservations/:idReservation
+ * @param {express.Request} req
+ * @param {express.Response} res
+ * @returns {Promise<void>}
+ */
 router.put('/:idReservation', async (req, res) => {
   try {
     const reservation = await Reservation.findById(req.params.idReservation);
@@ -125,7 +154,13 @@ router.put('/:idReservation', async (req, res) => {
   }
 });
 
-// DELETE reservation by idReservation with catway check
+/**
+ * Supprime une réservation après vérification de son appartenance au catway fourni.
+ * @route DELETE /catways/:id/reservations/:idReservation
+ * @param {express.Request} req
+ * @param {express.Response} res
+ * @returns {Promise<void>}
+ */
 router.delete('/:idReservation', async (req, res) => {
   try {
     const reservation = await Reservation.findById(req.params.idReservation);

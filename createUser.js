@@ -1,3 +1,8 @@
+/**
+ * @file createUser.js
+ * @description Script utilitaire pour insérer un utilisateur par défaut dans la base MongoDB.
+ */
+
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const dotenv = require('dotenv');
@@ -5,6 +10,11 @@ const User = require('./models/User');
 
 dotenv.config();
 
+/**
+ * Crée un utilisateur administrateur préconfiguré dans la base MongoDB.
+ * @async
+ * @returns {Promise<void>}
+ */
 async function createUser() {
   try {
     await mongoose.connect(process.env.MONGO_URI);

@@ -36,7 +36,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
       localStorage.setItem('user', JSON.stringify(data.user));
 
       // Redirection vers le tableau de bord
-      window.location.href = '/dashboard.html';
+      window.location.href = '/dashboard';
     } else {
       /**
        * @type {{ message?: string }}

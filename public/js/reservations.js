@@ -5,7 +5,7 @@
  */
 
 const token = localStorage.getItem('token');
-if (!token) window.location.href = '/index.html';
+if (!token) window.location.href = '/';
 
 const catwaySelect = document.getElementById('catwayNumber');
 const startInput = document.getElementById('startDate');
@@ -80,7 +80,7 @@ async function fetchAllReservations() {
 // Déconnexion
 document.getElementById('logoutBtn').addEventListener('click', () => {
   localStorage.removeItem('token');
-  window.location.href = '/index.html';
+  window.location.href = '/';
 });
 
 /**
