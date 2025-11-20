@@ -36,12 +36,34 @@ router.get('/:idReservation', async (req, res) => {
   }
 });
 
+const MAX_CATWAY_NUMBER = 24;
+const AUTO_CATWAY_STATE = "État à renseigner";
+
 // POST create reservation for a catway
 router.post('/', async (req, res) => {
   try {
-    const catwayNumber = req.params.id;
-    const catway = await Catway.findOne({ catwayNumber });
-    if (!catway) return res.status(404).json({ message: 'Catway non trouvé' });
+    const rawCatwayNumber = Number(req.params.id);
+    if (!Number.isInteger(rawCatwayNumber) || rawCatwayNumber <= 0) {
+      return res.status(400).json({ message: 'Numéro de catway invalide' });
+    }
+
+    if (rawCatwayNumber > MAX_CATWAY_NUMBER) {
+      return res.status(400).json({
+        message: `Le port ne possède que ${MAX_CATWAY_NUMBER} catways`
+      });
+    }
+
+    const catwayNumber = rawCatwayNumber.toString();
+    let catway = await Catway.findOne({ catwayNumber });
+
+    if (!catway) {
+      catway = new Catway({
+        catwayNumber,
+        catwayType: rawCatwayNumber >= 15 ? 'long' : 'short',
+        catwayState: AUTO_CATWAY_STATE
+      });
+      await catway.save();
+    }
 
     const { clientName, boatName, startDate, endDate } = req.body;
     if (!clientName || !boatName || !startDate || !endDate) {
