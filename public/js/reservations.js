@@ -14,7 +14,6 @@ const endInput = document.getElementById('endDate');
 let editingReservation = null;
 let catwaysCache = [];
 const reservationsByCatway = new Map();
-const TOTAL_CATWAYS = 24;
 
 /**
  * Récupère toutes les réservations pour tous les catways et les affiche dans le tableau.
@@ -23,28 +22,32 @@ const TOTAL_CATWAYS = 24;
 async function fetchAllReservations() {
   try {
     // Récupère les catways
-    const resCatways = await fetch('/catways', { headers: { Authorization: `Bearer ${token}` } });
-    if (!resCatways.ok) throw new Error('Erreur lors du chargement des catways');
-    const catways = await resCatways.json();
-    const enforcedCatways = Array.from({ length: TOTAL_CATWAYS }, (_, idx) => {
-      const number = idx + 1;
-      return catways.find(c => Number(c.catwayNumber) === number) || { catwayNumber: number };
-    });
+      const resCatways = await fetch('/catways', { headers: { Authorization: `Bearer ${token}` } });
+      if (!resCatways.ok) throw new Error('Erreur lors du chargement des catways');
+      const catways = await resCatways.json();
 
-    catwaysCache = enforcedCatways;
-    populateCatwaySelect(enforcedCatways);
-    reservationsByCatway.clear();
-    enforcedCatways.forEach(c => reservationsByCatway.set(Number(c.catwayNumber), []));
+      catwaysCache = catways;
+      populateCatwaySelect(catways);
+      reservationsByCatway.clear();
+      catways.forEach(c => {
+        const num = Number(c.catwayNumber);
+        if (!Number.isNaN(num)) {
+          reservationsByCatway.set(num, []);
+        }
+      });
 
-    const allReservations = [];
-    // Récupère les réservations pour chaque catway
-    for (const c of enforcedCatways) {
-      const res = await fetch(`/catways/${c.catwayNumber}/reservations`, { headers: { Authorization: `Bearer ${token}` } });
-      if (!res.ok) continue;
-      const reservations = await res.json();
-      reservationsByCatway.set(Number(c.catwayNumber), reservations);
-      allReservations.push(...reservations);
-    }
+      const allReservations = [];
+      // Récupère les réservations pour chaque catway existant
+      for (const c of catways) {
+        const res = await fetch(`/catways/${c.catwayNumber}/reservations`, { headers: { Authorization: `Bearer ${token}` } });
+        if (!res.ok) continue;
+        const reservations = await res.json();
+        const num = Number(c.catwayNumber);
+        if (!Number.isNaN(num)) {
+          reservationsByCatway.set(num, reservations);
+        }
+        allReservations.push(...reservations);
+      }
 
     const tbody = document.getElementById('reservationsTableBody');
     if (allReservations.length === 0) {

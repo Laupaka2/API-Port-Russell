@@ -62,19 +62,19 @@
       <li><code>DELETE /catways/:id</code> : Supprimer un catway</li>
     </ul>
 
-    <h3>📅 Réservations</h3>
-    <ul>
+      <h3>📅 Réservations</h3>
+      <ul>
         <li><code>GET /reservations</code> : Liste consolidée de toutes les réservations</li>
-      <li><code>GET /catways/:id/reservations</code> : Liste des réservations pour un catway</li>
-      <li><code>GET /catways/:id/reservations/:idReservation</code> : Détail d’une réservation</li>
-      <li><code>POST /catways/:id/reservations</code> : Ajouter une réservation</li>
-      <li><code>PUT /catways/:id/reservations/:idReservation</code> : Modifier une réservation</li>
-      <li><code>DELETE /catways/:id/reservations/:idReservation</code> : Supprimer une réservation</li>
-    </ul>
+        <li><code>GET /catways/:id/reservations</code> : Liste des réservations pour un catway</li>
+        <li><code>GET /catways/:id/reservations/:idReservation</code> : Détail d’une réservation</li>
+        <li><code>POST /catways/:id/reservations</code> : Ajouter une réservation</li>
+        <li><code>PUT /catways/:id/reservations/:idReservation</code> : Modifier une réservation</li>
+        <li><code>DELETE /catways/:id/reservations/:idReservation</code> : Supprimer une réservation</li>
+      </ul>
       <p class="text-muted">
-        ⚠️ Lors de la création d’une réservation, si le catway demandé (1 à 24) n’existe pas encore dans la base,
-        l’API le crée automatiquement en réutilisant le type et l’état issus de la configuration officielle du port
-        (visible dans le tableau de bord Catways).
+        ⚠️ Lors de la création d’une réservation, si le catway demandé n’existe pas encore dans la base (mais fait partie
+        de la configuration officielle du port), l’API le crée automatiquement avec ses caractéristiques d’origine.
+        Il apparaît alors dans le tableau de bord et la liste déroulante des réservations.
       </p>
 
     <hr>
