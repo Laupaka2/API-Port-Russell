@@ -8,7 +8,12 @@ const token = localStorage.getItem('token');
 if (!token) window.location.href = '/index.html';
 
 const catwaySelect = document.getElementById('catwayNumber');
+const startInput = document.getElementById('startDate');
+const endInput = document.getElementById('endDate');
+
 let editingReservation = null;
+let catwaysCache = [];
+const reservationsByCatway = new Map();
 
 /**
  * Récupère toutes les réservations pour tous les catways et les affiche dans le tableau.
@@ -20,6 +25,10 @@ async function fetchAllReservations() {
     const resCatways = await fetch('/catways', { headers: { Authorization: `Bearer ${token}` } });
     if (!resCatways.ok) throw new Error('Erreur lors du chargement des catways');
     const catways = await resCatways.json();
+    catwaysCache = catways;
+    populateCatwaySelect(catways);
+    reservationsByCatway.clear();
+    catways.forEach(c => reservationsByCatway.set(c.catwayNumber, []));
 
     const allReservations = [];
     // Récupère les réservations pour chaque catway
@@ -27,6 +36,7 @@ async function fetchAllReservations() {
       const res = await fetch(`/catways/${c.catwayNumber}/reservations`, { headers: { Authorization: `Bearer ${token}` } });
       if (!res.ok) continue;
       const reservations = await res.json();
+      reservationsByCatway.set(c.catwayNumber, reservations);
       allReservations.push(...reservations);
     }
 
@@ -48,6 +58,8 @@ async function fetchAllReservations() {
         </tr>
       `).join('');
     }
+
+    updateCatwayAvailability();
 
     // Ajout des listeners pour modification/suppression
     document.querySelectorAll('.editBtn').forEach(btn => btn.addEventListener('click', onEditClick));
@@ -134,6 +146,7 @@ function resetForm() {
   form.reset();
   catwaySelect.disabled = false;
   catwaySelect.selectedIndex = 0;
+  updateCatwayAvailability();
   document.getElementById('submitBtn').textContent = 'Enregistrer';
   document.getElementById('cancelBtn').style.display = 'none';
 }
@@ -158,11 +171,12 @@ function onEditClick(event) {
       catwaySelect.disabled = true;
       document.getElementById('clientName').value = reservation.clientName;
       document.getElementById('boatName').value = reservation.boatName;
-      document.getElementById('startDate').value = reservation.startDate.slice(0,10);
-      document.getElementById('endDate').value = reservation.endDate.slice(0,10);
+      startInput.value = reservation.startDate.slice(0,10);
+      endInput.value = reservation.endDate.slice(0,10);
 
       document.getElementById('submitBtn').textContent = 'Mettre à jour';
       document.getElementById('cancelBtn').style.display = 'inline-block';
+      updateCatwayAvailability();
     })
     .catch(() => alert('Impossible de récupérer la réservation'));
 }
@@ -189,6 +203,92 @@ function onDeleteClick(event) {
     })
     .catch(() => alert('Erreur réseau'));
 }
+
+/**
+ * Remplit la liste déroulante des catways avec les numéros disponibles.
+ * @param {Array} catways 
+ */
+function populateCatwaySelect(catways = []) {
+  const previouslySelected = catwaySelect.value;
+  const wasDisabled = catwaySelect.disabled;
+
+  catwaySelect.innerHTML = '';
+  const placeholder = document.createElement('option');
+  placeholder.value = '';
+  placeholder.disabled = true;
+  placeholder.selected = true;
+  placeholder.textContent = 'Sélectionnez un catway';
+  catwaySelect.appendChild(placeholder);
+
+  catways
+    .map(c => Number(c.catwayNumber))
+    .filter(num => !Number.isNaN(num))
+    .sort((a, b) => a - b)
+    .forEach(num => {
+      const option = document.createElement('option');
+      option.value = num;
+      option.dataset.catway = num;
+      option.textContent = `Catway n°${num}`;
+      catwaySelect.appendChild(option);
+    });
+
+  if (previouslySelected && catways.some(c => String(c.catwayNumber) === previouslySelected)) {
+    catwaySelect.value = previouslySelected;
+    placeholder.selected = false;
+  }
+
+  catwaySelect.disabled = wasDisabled;
+}
+
+/**
+ * Met à jour la disponibilité des catways en fonction des dates choisies.
+ */
+function updateCatwayAvailability() {
+  if (!catwaysCache.length) return;
+
+  const startValue = startInput.value;
+  const endValue = endInput.value;
+  const options = catwaySelect.querySelectorAll('option[data-catway]');
+
+  options.forEach(option => {
+    option.disabled = false;
+    option.classList.remove('text-muted');
+  });
+
+  if (!startValue || !endValue) {
+    return;
+  }
+
+  const startDate = new Date(startValue);
+  const endDate = new Date(endValue);
+
+  if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime()) || startDate >= endDate) {
+    return;
+  }
+
+  reservationsByCatway.forEach((reservations, catwayNum) => {
+    const option = catwaySelect.querySelector(`option[data-catway="${catwayNum}"]`);
+    if (!option) return;
+
+    const hasOverlap = reservations.some(reservation => {
+      if (editingReservation && reservation._id === editingReservation._id) return false;
+      const resStart = new Date(reservation.startDate);
+      const resEnd = new Date(reservation.endDate);
+      return resStart <= endDate && resEnd >= startDate;
+    });
+
+    if (hasOverlap) {
+      option.disabled = true;
+      option.classList.add('text-muted');
+      if (catwaySelect.value === option.value && !catwaySelect.disabled) {
+        catwaySelect.selectedIndex = 0;
+      }
+    }
+  });
+}
+
+startInput.addEventListener('change', updateCatwayAvailability);
+endInput.addEventListener('change', updateCatwayAvailability);
 
 // Chargement initial
 fetchAllReservations();
