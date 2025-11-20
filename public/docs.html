@@ -33,11 +33,16 @@
     <hr>
 
     <!-- Documentation textuelle optionnelle -->
-    <h3>🔐 Authentification</h3>
-    <ul>
-      <li><code>POST /login</code> : Se connecter (retourne un JWT)</li>
-      <li><code>GET /logout</code> : Se déconnecter</li>
-    </ul>
+      <h3>🔐 Authentification</h3>
+      <div class="alert alert-info">
+        <strong>Identifiants de démonstration :</strong> jeremy.beaugendre@gmail.com / 22101992.<br>
+        Après connexion (<code>POST /auth/login</code>), récupérez le token JWT et renseignez-le dans Swagger via le bouton <em>Authorize</em>
+        (<code>Bearer &lt;token&gt;</code>) pour accéder aux routes protégées.
+      </div>
+      <ul>
+        <li><code>POST /auth/login</code> : Se connecter (retourne un JWT)</li>
+        <li><code>GET /auth/logout</code> : Se déconnecter</li>
+      </ul>
 
     <h3>👤 Utilisateurs</h3>
     <ul>
@@ -59,12 +64,18 @@
 
     <h3>📅 Réservations</h3>
     <ul>
+        <li><code>GET /reservations</code> : Liste consolidée de toutes les réservations</li>
       <li><code>GET /catways/:id/reservations</code> : Liste des réservations pour un catway</li>
       <li><code>GET /catways/:id/reservations/:idReservation</code> : Détail d’une réservation</li>
       <li><code>POST /catways/:id/reservations</code> : Ajouter une réservation</li>
       <li><code>PUT /catways/:id/reservations/:idReservation</code> : Modifier une réservation</li>
       <li><code>DELETE /catways/:id/reservations/:idReservation</code> : Supprimer une réservation</li>
     </ul>
+      <p class="text-muted">
+        ⚠️ Lors de la création d’une réservation, si le catway demandé (1 à 24) n’existe pas encore dans la base,
+        l’API le crée automatiquement en réutilisant le type et l’état issus de la configuration officielle du port
+        (visible dans le tableau de bord Catways).
+      </p>
 
     <hr>
 

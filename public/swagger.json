@@ -9,6 +9,10 @@
     {
       "url": "http://localhost:3000",
       "description": "Serveur local"
+    },
+    {
+      "url": "https://api-port-russell-c0dn.onrender.com",
+      "description": "Serveur déployé (Render)"
     }
   ],
   "components": {
@@ -65,6 +69,7 @@
       "post": {
         "summary": "Connexion",
         "description": "Permet à un utilisateur de se connecter et de recevoir un token JWT.",
+          "security": [],
         "requestBody": {
           "required": true,
           "content": {
@@ -107,6 +112,7 @@
       "get": {
         "summary": "Déconnexion",
         "description": "Déconnecte l'utilisateur et invalide le token JWT.",
+          "security": [],
         "responses": { "200": { "description": "Déconnexion réussie." } }
       }
     },
@@ -185,60 +191,88 @@
         }
       }
     },
-    "/catways": {
-      "get": {
-        "summary": "Liste des catways",
-        "description": "Retourne la liste de tous les catways.",
-        "responses": {
-          "200": {
-            "description": "Succès",
-            "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Catway" } } } }
+      "/catways": {
+        "get": {
+          "summary": "Liste des catways",
+          "description": "Retourne la liste de tous les catways.",
+          "responses": {
+            "200": {
+              "description": "Succès",
+              "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Catway" } } } }
+            }
+          }
+        },
+        "post": {
+          "summary": "Créer un catway",
+          "description": "Ajoute un nouveau catway dans la base.",
+          "requestBody": {
+            "required": true,
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Catway" } } }
+          },
+          "responses": {
+            "201": { "description": "Catway créé avec succès" },
+            "400": { "description": "Erreur de validation", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
           }
         }
       },
-      "post": {
-        "summary": "Créer un catway",
-        "description": "Ajoute un nouveau catway dans la base.",
-        "requestBody": {
-          "required": true,
-          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Catway" } } }
+      "/catways/{id}": {
+        "get": {
+          "summary": "Détail d'un catway",
+          "parameters": [
+            { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" }, "description": "Numéro du catway" }
+          ],
+          "responses": {
+            "200": { "description": "Détails du catway", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Catway" } } } },
+            "404": { "description": "Catway non trouvé", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+          }
         },
-        "responses": {
-          "201": { "description": "Catway créé avec succès" },
-          "400": { "description": "Erreur de validation", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
-        }
-      }
-    },
-    "/catways/{id}": {
-      "get": {
-        "summary": "Détail d'un catway",
-        "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" }, "description": "Numéro du catway" }
-        ],
-        "responses": {
-          "200": { "description": "Détails du catway", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Catway" } } } },
-          "404": { "description": "Catway non trouvé", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        "put": {
+          "summary": "Modifier l'état d'un catway",
+          "parameters": [
+            { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+          ],
+          "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Catway" } } } },
+          "responses": { "200": { "description": "Catway modifié avec succès" } }
+        },
+        "delete": {
+          "summary": "Supprimer un catway",
+          "parameters": [
+            { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+          ],
+          "responses": {
+            "200": { "description": "Catway supprimé avec succès" },
+            "404": {
+              "description": "Catway non trouvé",
+              "content": {
+                "application/json": { "schema": { "$ref": "#/components/schemas/Error" } }
+              }
+            }
+          }
         }
       },
-      "put": {
-        "summary": "Modifier l'état d'un catway",
-        "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
-        ],
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Catway" } } } },
-        "responses": { "200": { "description": "Catway modifié avec succès" } }
-      },
-      "delete": {
-        "summary": "Supprimer un catway",
-        "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
-        ],
-        "responses": {
-          "200": { "description": "Catway supprimé avec succès" },
-          "404": { "description": "Catway non trouvé", "content": { "application/json/schema": { "$ref": "#/components/schemas/Error" } } }
+      "/reservations": {
+        "get": {
+          "summary": "Liste globale des réservations",
+          "description": "Retourne toutes les réservations du port, tous catways confondus.",
+          "responses": {
+            "200": {
+              "description": "Succès",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": { "$ref": "#/components/schemas/Reservation" }
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Erreur serveur",
+              "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+            }
+          }
         }
-      }
-    },
+      },
     "/catways/{id}/reservations": {
       "get": {
         "summary": "Liste des réservations d'un catway",
@@ -254,8 +288,13 @@
         ],
         "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Reservation" } } } },
         "responses": {
-          "201": { "description": "Réservation créée avec succès" },
-          "400": { "description": "Erreur de validation", "content": { "application/json/schema": { "$ref": "#/components/schemas/Error" } } }
+            "201": { "description": "Réservation créée avec succès" },
+            "400": {
+              "description": "Erreur de validation",
+              "content": {
+                "application/json": { "schema": { "$ref": "#/components/schemas/Error" } }
+              }
+            }
         }
       }
     },
@@ -284,8 +323,13 @@
           { "name": "idReservation", "in": "path", "required": true, "schema": { "type": "string" } }
         ],
         "responses": {
-          "200": { "description": "Réservation supprimée avec succès" },
-          "404": { "description": "Réservation non trouvée", "content": { "application/json/schema" : { "$ref": "#/components/schemas/Error" } } }
+            "200": { "description": "Réservation supprimée avec succès" },
+            "404": {
+              "description": "Réservation non trouvée",
+              "content": {
+                "application/json": { "schema": { "$ref": "#/components/schemas/Error" } }
+              }
+            }
         }
       }
     }
