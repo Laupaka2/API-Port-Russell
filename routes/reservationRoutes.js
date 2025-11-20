@@ -54,8 +54,6 @@ router.get('/:idReservation', async (req, res) => {
   }
 });
 
-const MAX_CATWAY_NUMBER = catwaySeed.length;
-
 /**
  * Crée une réservation pour un catway (en le créant automatiquement s'il n'existe pas encore).
  * @route POST /catways/:id/reservations
@@ -68,12 +66,6 @@ router.post('/', async (req, res) => {
     const rawCatwayNumber = Number(req.params.id);
     if (!Number.isInteger(rawCatwayNumber) || rawCatwayNumber <= 0) {
       return res.status(400).json({ message: 'Numéro de catway invalide' });
-    }
-
-    if (rawCatwayNumber > MAX_CATWAY_NUMBER) {
-      return res.status(400).json({
-        message: `Le port ne possède que ${MAX_CATWAY_NUMBER} catways`
-      });
     }
 
     const catwayNumber = rawCatwayNumber.toString();
