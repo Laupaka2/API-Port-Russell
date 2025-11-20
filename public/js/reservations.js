@@ -234,7 +234,7 @@ function populateCatwaySelect(catways = []) {
       const option = document.createElement('option');
       option.value = num;
       option.dataset.catway = num;
-      option.textContent = `Catway n°${num}`;
+      option.textContent = num;
       catwaySelect.appendChild(option);
     });
 
