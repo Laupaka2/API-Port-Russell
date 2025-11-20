@@ -1,6 +1,7 @@
 const express = require('express');
 const Reservation = require('../models/Reservation');
 const Catway = require('../models/Catway');
+const catwaySeed = require('../data/catways.json');
 
 const router = express.Router({ mergeParams: true });
 
@@ -36,8 +37,7 @@ router.get('/:idReservation', async (req, res) => {
   }
 });
 
-const MAX_CATWAY_NUMBER = 24;
-const AUTO_CATWAY_STATE = "État à renseigner";
+const MAX_CATWAY_NUMBER = catwaySeed.length;
 
 // POST create reservation for a catway
 router.post('/', async (req, res) => {
@@ -57,10 +57,15 @@ router.post('/', async (req, res) => {
     let catway = await Catway.findOne({ catwayNumber });
 
     if (!catway) {
+      const seedCatway = catwaySeed.find(c => Number(c.catwayNumber) === rawCatwayNumber);
+      if (!seedCatway) {
+        return res.status(404).json({ message: 'Catway introuvable dans la configuration du port' });
+      }
+
       catway = new Catway({
         catwayNumber,
-        catwayType: rawCatwayNumber >= 15 ? 'long' : 'short',
-        catwayState: AUTO_CATWAY_STATE
+        catwayType: seedCatway.catwayType,
+        catwayState: seedCatway.catwayState
       });
       await catway.save();
     }
