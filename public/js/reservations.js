@@ -22,14 +22,15 @@ const reservationsByCatway = new Map();
 async function fetchAllReservations() {
   try {
     // Récupère les catways
-      const resCatways = await fetch('/catways', { headers: { Authorization: `Bearer ${token}` } });
-      if (!resCatways.ok) throw new Error('Erreur lors du chargement des catways');
-      const catways = await resCatways.json();
+    const resCatways = await fetch('/catways', { headers: { Authorization: `Bearer ${token}` } });
+    if (!resCatways.ok) throw new Error('Erreur lors du chargement des catways');
+    const catways = await resCatways.json();
+    const uniqueCatways = [...new Map(catways.map(c => [String(c.catwayNumber), c])).values()];
 
-      catwaysCache = catways;
-      populateCatwaySelect(catways);
+    catwaysCache = uniqueCatways;
+    populateCatwaySelect(uniqueCatways);
       reservationsByCatway.clear();
-      catways.forEach(c => {
+    uniqueCatways.forEach(c => {
         const num = Number(c.catwayNumber);
         if (!Number.isNaN(num)) {
           reservationsByCatway.set(num, []);
@@ -37,8 +38,8 @@ async function fetchAllReservations() {
       });
 
       const allReservations = [];
-      // Récupère les réservations pour chaque catway existant
-      for (const c of catways) {
+    // Récupère les réservations pour chaque catway existant
+    for (const c of uniqueCatways) {
         const res = await fetch(`/catways/${c.catwayNumber}/reservations`, { headers: { Authorization: `Bearer ${token}` } });
         if (!res.ok) continue;
         const reservations = await res.json();
