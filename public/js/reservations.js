@@ -14,6 +14,7 @@ const endInput = document.getElementById('endDate');
 let editingReservation = null;
 let catwaysCache = [];
 const reservationsByCatway = new Map();
+const TOTAL_CATWAYS = 24;
 
 /**
  * Récupère toutes les réservations pour tous les catways et les affiche dans le tableau.
@@ -25,18 +26,23 @@ async function fetchAllReservations() {
     const resCatways = await fetch('/catways', { headers: { Authorization: `Bearer ${token}` } });
     if (!resCatways.ok) throw new Error('Erreur lors du chargement des catways');
     const catways = await resCatways.json();
-    catwaysCache = catways;
-    populateCatwaySelect(catways);
+    const enforcedCatways = Array.from({ length: TOTAL_CATWAYS }, (_, idx) => {
+      const number = idx + 1;
+      return catways.find(c => Number(c.catwayNumber) === number) || { catwayNumber: number };
+    });
+
+    catwaysCache = enforcedCatways;
+    populateCatwaySelect(enforcedCatways);
     reservationsByCatway.clear();
-    catways.forEach(c => reservationsByCatway.set(c.catwayNumber, []));
+    enforcedCatways.forEach(c => reservationsByCatway.set(Number(c.catwayNumber), []));
 
     const allReservations = [];
     // Récupère les réservations pour chaque catway
-    for (const c of catways) {
+    for (const c of enforcedCatways) {
       const res = await fetch(`/catways/${c.catwayNumber}/reservations`, { headers: { Authorization: `Bearer ${token}` } });
       if (!res.ok) continue;
       const reservations = await res.json();
-      reservationsByCatway.set(c.catwayNumber, reservations);
+      reservationsByCatway.set(Number(c.catwayNumber), reservations);
       allReservations.push(...reservations);
     }
 
@@ -232,7 +238,7 @@ function populateCatwaySelect(catways = []) {
       catwaySelect.appendChild(option);
     });
 
-  if (previouslySelected && catways.some(c => String(c.catwayNumber) === previouslySelected)) {
+  if (previouslySelected && catways.some(c => String(c.catwayNumber) === String(previouslySelected))) {
     catwaySelect.value = previouslySelected;
     placeholder.selected = false;
   }
@@ -246,8 +252,13 @@ function populateCatwaySelect(catways = []) {
 function updateCatwayAvailability() {
   if (!catwaysCache.length) return;
 
-  const startValue = startInput.value;
-  const endValue = endInput.value;
+  const { ready, startDate, endDate } = getSelectedDateRange();
+  if (!editingReservation) {
+    catwaySelect.disabled = !ready;
+    if (!ready) {
+      catwaySelect.selectedIndex = 0;
+    }
+  }
   const options = catwaySelect.querySelectorAll('option[data-catway]');
 
   options.forEach(option => {
@@ -255,14 +266,7 @@ function updateCatwayAvailability() {
     option.classList.remove('text-muted');
   });
 
-  if (!startValue || !endValue) {
-    return;
-  }
-
-  const startDate = new Date(startValue);
-  const endDate = new Date(endValue);
-
-  if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime()) || startDate >= endDate) {
+  if (!ready) {
     return;
   }
 
@@ -285,6 +289,21 @@ function updateCatwayAvailability() {
       }
     }
   });
+}
+
+function getSelectedDateRange() {
+  const startValue = startInput.value;
+  const endValue = endInput.value;
+  if (!startValue || !endValue) return { ready: false };
+
+  const startDate = new Date(startValue);
+  const endDate = new Date(endValue);
+
+  if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime()) || startDate >= endDate) {
+    return { ready: false };
+  }
+
+  return { ready: true, startDate, endDate };
 }
 
 startInput.addEventListener('change', updateCatwayAvailability);
